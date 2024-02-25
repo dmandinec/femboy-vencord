@@ -1,7 +1,8 @@
 import { ApplicationCommandOptionType } from "../../api/Commands";
-import definePlugin from "../../utils/types";
+import definePlugin from "@utils/types";
+import { Logger } from "@utils/Logger";
 
-function rand(min, max) {
+function rand(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -35,48 +36,34 @@ export default definePlugin({
         description: "Send a femboy image from Reddit",
         options: [
             {
-                name: "nsfw",
-                description: "Include NSFW content",
-                type: ApplicationCommandOptionType.BOOLEAN,
-                required: false,
-            },
-            {
                 name: "sort",
                 description: "Sort posts by (hot, new, top, etc.)",
                 type: ApplicationCommandOptionType.STRING,
                 required: false,
                 choices: [
-                    { name: "Hot", value: "hot" },
-                    { name: "New", value: "new" },
-                    { name: "Top", value: "top" },
-                    { name: "Rising", value: "rising" },
-                    { name: "Controversial", value: "controversial" },
-                    { name: "Best", value: "best" }
+                    { label: "Hot", name: "Hot", value: "hot" },
+                    { label: "New", name: "New", value: "new" },
+                    { label: "Top", name: "Top", value: "top" },
+                    { label: "Rising", name: "Rising", value: "rising" },
+                    { label: "Controversial", name: "Controversial", value: "controversial" },
+                    { label: "Best", name: "Best", value: "best" }
                 ],
             },
         ],
 
         async execute(args) {
-            let sub = "femboys"; // Default subreddit for femboy images
-            let sort = "top"; // Default sorting
-            let nsfw = false; // NSFW content flag
+            let sort: string;
 
-            args.forEach(arg => {
-                switch (arg.name) {
-                    case "nsfw":
-                        nsfw = arg.value;
-                        sub = nsfw ? "FemBoys_NSFW" : "femboys"; // Change to the NSFW subreddit if needed
-                        break;
-                    case "sort":
-                        sort = arg.value;
-                        break;
-                }
-            });
+            try {
+                sort = args[0].value;
+            } catch (_) {
+                sort = "hot";
+            }
 
-            const imageUrl = await fetchReddit(sub, sort);
-            return {
-                content: imageUrl || "No image found.",
-            };
+            const imageUrl = await fetchReddit("femboys", sort);
+             return {
+                 content: imageUrl || "No image found.",
+             };
         },
     }]
 });
