@@ -25,13 +25,13 @@ async function fetchReddit(sub: string, sort: string = 'top') {
 export default definePlugin({
     name: "Femboy-Images", // Updated plugin name
     authors: [{
-        name: "Shady Goat",
+        name: "dmandinec",
         id: BigInt(376079696489742338),
     }],
     description: "Add a command to send femboy images from Reddit",
     dependencies: ["CommandsAPI"],
     commands: [{
-        name: "femboy", // Command updated to /femboy
+        name: "femboy",
         description: "Send a femboy image from Reddit",
         options: [
             {
