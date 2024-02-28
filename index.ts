@@ -7,21 +7,25 @@ function rand(min: number, max: number) {
 }
 
 async function fetchReddit(sub: string, sort: string = 'top') {
-    const url = `https://www.reddit.com/r/${sub}/${sort}.json?limit=100`;
-    const res = await fetch(url);
-    const resp = await res.json();
-    try {
-        const { children } = resp.data;
-        let r = rand(0, children.length - 1);
-        return children[r].data.url;
-    } catch (err) {
-        console.error(resp);
-        console.error(err);
-        return "Error fetching image.";
-    }
+    let imageUrl: string;
+
+    do {
+        const url = `https://www.reddit.com/r/${sub}/${sort}.json?limit=100`;
+        const res = await fetch(url);
+        const resp = await res.json();
+        try {
+            const { children } = resp.data;
+            let r = rand(0, children.length - 1);
+            imageUrl = children[r].data.url;
+        } catch (err) {
+            console.error(resp);
+            console.error(err);
+            imageUrl = "Error fetching image.";
+        }
+    } while (imageUrl && imageUrl.includes("https://www.reddit.com/gallery/"));
+
+    return imageUrl;
 }
-
-
 
 export default definePlugin({
     name: "Femboy-Images", // Updated plugin name
@@ -61,9 +65,9 @@ export default definePlugin({
             }
 
             const imageUrl = await fetchReddit("femboys", sort);
-             return {
-                 content: imageUrl || "No image found.",
-             };
+            return {
+                content: imageUrl || "No image found.",
+            };
         },
     }]
 });
